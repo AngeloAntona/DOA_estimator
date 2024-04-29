@@ -15,5 +15,5 @@
 ## Legend
 
 - :green_circle: Complete
-- :green_circle: In Progress
-- :green_circle: Not Implemented
+- :yellow_circle: In Progress
+- :red_circle: Not Implemented
