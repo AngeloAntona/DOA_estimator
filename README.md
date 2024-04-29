@@ -5,12 +5,12 @@
 
 | Class Name                             | Status       |
 |---------------------------------------|--------------------------|
-| `FFT`                                 | :red_circle: |
-| `STFT.m`                              | :yellow_circle:  |
-| `stft_all_channels.m`                 | :red_circle:  |
-| `delay_and_sum.m`                     | :red_circle: |
-| `scan_angles.m`                       | :red_circle:|
-| `hw1.m`                               | :red_circle: |
+| FFT                                 | :red_circle: |
+| STFT.m                              | :yellow_circle:  |
+| stft_all_channels.m                 | :red_circle:  |
+| delay_and_sum.m                     | :red_circle: |
+| scan_angles.m                       | :red_circle:|
+| hw1.m                               | :red_circle: |
 
 ## Legend
 
