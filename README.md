@@ -5,15 +5,15 @@
 
 | File Name                             | Development Status       |
 |---------------------------------------|--------------------------|
-| `FFT`                                 | <span style="color:red">●</span> Not Implemented |
-| `STFT.m`                              | <span style="color:orange">●</span> In Progress  |
-| `stft_all_channels.m`                 | <span style="color:orange">●</span> In Progress  |
-| `delay_and_sum.m`                     | <span style="color:red">●</span> Not Implemented |
-| `scan_angles.m`                       | <span style="color:red">●</span> Not Implemented |
-| `hw1.m`                               | <span style="color:red">●</span> Not Implemented |
+| `FFT`                                 | :red_circle: |
+| `STFT.m`                              | :yellow_circle:  |
+| `stft_all_channels.m`                 | :red_circle:  |
+| `delay_and_sum.m`                     | :red_circle: |
+| `scan_angles.m`                       | :red_circle:|
+| `hw1.m`                               | :red_circle: |
 
 ## Legend
 
-- <span style="color:green">●</span> Complete
-- <span style="color:orange">●</span> In Progress
-- <span style="color:red">●</span> Not Implemented
+- :green_circle: Complete
+- :green_circle: In Progress
+- :green_circle: Not Implemented
