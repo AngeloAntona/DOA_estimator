@@ -3,7 +3,7 @@
 
 # MATLAB Classes Development Status
 
-| File Name                             | Development Status       |
+| Class Name                             | Status       |
 |---------------------------------------|--------------------------|
 | `FFT`                                 | :red_circle: |
 | `STFT.m`                              | :yellow_circle:  |
