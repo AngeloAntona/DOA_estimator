@@ -1,0 +1,87 @@
+clc
+close all
+clearvars
+
+% =========================================================================
+%% parameters
+
+% Load the audio file (we know the sampling frequency Fs)
+s = audioread('array_recordings.wav');
+Fs = 8000;
+
+% We are saying that s is now stereo using the notation s(:,1:2) 
+% 1) first audio channel --> left 
+% 2) second audio channel --> right
+%s = y(:, 1:2);
+
+if size(s, 2) ~= 16
+    error('Il numero di canali nel file audio non corrisponde al numero di microfoni (16).');
+end
+
+% We use the function sound to hear the stereo audio file
+%sound(s, Fs);
+
+M = 16; % number of MEMS microphones in the EStick
+L = 0.45; % total length of the EStick --> (centimeters or meters?)
+c = 343; % speed of sound
+
+% distance between two microphones
+d = L / (M-1);
+
+%% Plot the ULA display
+
+% Calculate Positions
+x_positions = linspace(0, L, M);
+y_positions = zeros(1, M); % Alignment along the x-axis
+
+% Plotting
+figure;
+scatter(x_positions, y_positions, 100, 'filled'); % Marker size of 100, filled for visibility
+hold on;
+plot(x_positions, y_positions, 'k--'); % Connect with a dashed line
+text(x_positions + 0.01, y_positions, string(1:M), 'VerticalAlignment', 'bottom');
+title('Uniform Linear Array (ULA) Setup');
+xlabel('Position along the array (meters)');
+ylabel('Line of microphones (all at y=0)');
+grid on;
+axis equal;
+
+
+%==========================================================================
+%% Find the angle theta with the maximum power
+
+[theta_best, power_max] = scan_angles(s, Fs, c, d, M);
+disp(theta_best);  % 50°
+
+
+
+%% Compute STFT for all channels
+
+% STFT parameters
+window_size = 256;
+hop_size = 1;  % 50% overlap
+
+%Y = STFT_basic(s,window_size,hop_size);
+%disp(Y);S
+
+[S, f, t] = stft_all_channels(s, window_size, hop_size, M, Fs);
+
+
+%% Beamforming across all frames and frequencies
+
+% angles range from -90° to 90°
+theta_range = linspace(-90, 90, 180);
+
+S_beamformed = beamform_all_frames_and_freqs(S, Fs, c, d, theta_range);
+disp(S_beamformed);
+
+%==========================================================================
+%% Visualization
+
+
+
+
+%==========================================================================
+
+
+

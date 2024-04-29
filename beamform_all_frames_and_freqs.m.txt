@@ -1,0 +1,18 @@
+function Y_beamformed = beamform_all_frames_and_freqs(S, Fs, c, d, theta_range)
+    %num_mics = length(S);
+    
+    [num_freqs, num_frames] = size(S{1});
+    Y_beamformed = zeros(num_freqs, num_frames);
+
+    for frame_idx = 1:num_frames
+        for freq_idx = 1:num_freqs
+
+            % Estrai il frame corrente per tutte le frequenze per tutti i microfoni
+            current_frame = cellfun(@(x) x(freq_idx, frame_idx), S, 'UniformOutput', false);
+            current_frame = cell2mat(current_frame);  % Converti in matrice
+
+            % Applica il beamforming a questo frame e frequenza
+            Y_beamformed(freq_idx, frame_idx) = delay_and_sum(current_frame, freq_idx * Fs / num_freqs, Fs, c, d, theta_range);
+        end
+    end
+end

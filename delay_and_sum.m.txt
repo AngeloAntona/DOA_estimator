@@ -1,0 +1,63 @@
+function s_sum = delay_and_sum(s, Fs, c, d, theta)
+    
+    %% Input
+    % 1) s : signal
+    % 2) Fs : sampling frequency
+    % 3) c : speed of sound
+    % 4) d : distance between two sensors
+    % 5) theta : current angle
+
+    %% Output
+    % 1) s_sum : summed signal
+
+    %% parameters
+    M = size(s, 2); % number of sensors
+    s_sum = zeros(size(s,1), 1); % initialize the summed output
+    delays = zeros(M,1); % initialize the delays for each microphones
+
+    %% Find the delays for each microphone
+    % for each sensor, it calculates how much the signal has to be delayed
+    % base on the sensor position and the angle of arrival of the sound.
+    % This delay is proportional to the difference of path that the sound
+    % has to travel in order to reach different microphones.
+
+    for m = 1:M
+        
+        % Position of the microphone m
+        pos_m = (m-1) * d;
+        disp(['position: ', num2str(pos_m)]);
+
+        % delay in seconds
+        delay_sec = pos_m * sin(theta) / c;
+
+        % delay in samples
+        delay_samples = round(delay_sec * Fs);
+
+        % put delay_sample in the array
+        delays(m) = delay_samples;
+
+    end 
+
+    %% Apply the delays and sum the signals
+    % The delayed signal are summed together. This sum emphasize the signal
+    % that comes from the specified angles, while the signals coming from
+    % other directions tend to cancel each other out.
+
+    for m = 1:M
+           
+        % Shift the signal
+        s_delayed = circshift(s(:, m), delays(m));
+
+        % sum it with the signal
+        s_sum = s_delayed + s_sum;
+
+    end 
+
+    %% Normalize the summed signal for the number of microphones
+    % The summed signal is normalized for the number of microphones in
+    % order to avoid that the signal amplitude increases with the addition
+    % of more microphones.
+
+    s_sum = s_sum / M;
+
+end

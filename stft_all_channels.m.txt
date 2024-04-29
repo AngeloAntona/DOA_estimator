@@ -1,0 +1,77 @@
+function [S, f, t] = stft_all_channels(s, window_size, hop_size, n_mics, Fs)
+
+    %% Input
+    % 1) s : signal
+    % 2) Fs : sampling frequency
+    % 3) window_size
+    % 4) hop_size
+    % 5) n_mics : number of microphones in the ULA
+
+    %% Output
+    % 1) S : array of cells that contain the STFT matrixes for each channel
+    % 2) f : frequencies vector
+    % 3) t : times vector
+
+
+    n_mics_available = size(s, 2);  % Numero effettivo di microfoni/canali disponibili
+    disp(['effective n_mic : ', num2str(n_mics_available)]);
+    if size(s, 2) < n_mics
+        error('Numero di canali in s (%d) è minore del numero di microfoni previsti (%d).', size(s, 2), n_mics);
+    end
+
+    disp(['W (Window Size): ', num2str(window_size)]);
+    disp(['H (Hop Size): ', num2str(hop_size)]);
+    disp(['M (Microphones): ', num2str(n_mics)]);
+
+    disp(['Dimensioni del segnale s: ', mat2str(size(s))]);
+    disp(['Numero di microfoni atteso (n_mics): ', num2str(n_mics)]);
+
+    % cell that contains the STFT matrixes od each channel
+    %S = cell(1, n_mics);
+    
+    %for m = 1:n_mics
+        
+        % Calculate the STFT for each channel
+        %[S{m}] = STFT_basic(s(:,m), window_size, hop_size);
+        %disp(S{m});
+
+    %end 
+
+
+
+    numFreqs = floor(window_size / 2) + 1;
+    numTimes = floor((size(s, 1) - window_size) / hop_size) + 1;
+    disp(['numFreqs : ', num2str(numFreqs)]);
+    disp(['numTimes : ', num2str(numTimes)]);
+
+    S = cell(1, n_mics); % initialize the vector of matrices
+
+    for m = 1:n_mics
+        
+        disp(['Processando il microfono ', num2str(m)]);
+        if m > size(s, 2)
+            error('Tentativo di accesso a una colonna non esistente in s');
+        end
+
+        [tempS, f, t] = STFT_basic(s(:, m), window_size, hop_size, Fs);
+        S{m} = tempS;
+
+    end
+
+    figure('Position', [100, 0, 1000, 800]);    % [left, bottom, width, height]
+
+    for m = 1:n_mics
+
+        subplot(ceil(n_mics / 4), 4, m); % divide the plot in 4 rows
+        spectrogram = abs(S{m}); % STFT modulus in order to visualize the amplitude
+        imagesc(t, f, 20*log10(spectrogram)); % amplitude algorhitm
+        axis xy; 
+        xlabel('Time (s)');
+        ylabel('Frequency (Hz)');
+        title(['Microphone ', num2str(m)]);
+        colorbar; 
+
+    end
+
+    colormap hot; 
+end 

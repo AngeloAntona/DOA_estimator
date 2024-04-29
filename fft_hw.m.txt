@@ -1,0 +1,73 @@
+function X = fft_hw(x)
+    
+    %% Input
+    % 1) x : current frame
+
+    %% Output
+    % 1) X : FFT of the frame
+
+    %% parameter
+    N = length(x); 
+
+    %% Controls
+
+    % If the signal length is 1, the output will be the same as the input,
+    % since the DFT of a single point is the point itself.
+    if N <= 1
+        %disp('ATTENTION : The signal length is 1 --> Input = Output');
+        X = x;
+        return;
+    end
+
+    % The algorithm controls if the length N is a power of 2, this is
+    % necessary since the algorithm divides repeatedly the dataset in a
+    % half
+    if mod(N, 2) > 0
+        error('ERROR : The signal length has to be a power of 2!');
+    end
+    
+    %% Calculate the FFT on even and odd data recorsively
+    % FFT on EVEN data
+    X_even = fft_hw(x(1:2:end));
+
+    % FFT on ODD data
+    X_odd = fft_hw(x(2:2:end));
+
+    %% Union of the results
+    X = zeros(1, N); % initialize X
+
+    % The loop runs for half the length of the signal N/2. For each 'k'
+    % index, calculate and combine even and odd terms using the FFT
+    % formula. The 'even' part is added up and subtracted from the product
+    % of the 'odd' term and a rotating factor, which is based on the
+    % exponential complex.
+
+    % rotor : rotating term that represents the complex part needed to modulate 
+            % (or rotate) the components of the FFT computed from the odd subsets.
+            % This term is a point on the unit circle in the complex plane and 
+            % changes with each value of k, describing a "rotor" that circles 
+            % around the origin of the complex plane.
+    % t     : applies this rotating term to the corresponding value from the 
+            % FFT calculated from the odd data. This modifies the phase of the odd
+            % component so that when it is combined with the even component, 
+            % the result will be correctly phase-aligned for the final position k 
+            % in the complete FFT array.
+
+    for k = 0:N/2-1
+
+        % Calculate the complex term
+        rotor = exp(-2 * pi * 1i * k / N);
+
+        t = X_odd(k + 1) * rotor;
+
+        % Compute the FFT value for the position k, by adding the
+        % unmodified even component and the modified odd component
+        X(k + 1) = X_even(k + 1) + t;
+
+        % Compute the FFT value for the position k+N/2 by subtracting the 
+        % rotated term from the even component. This difference is
+        % necessary to accurately represent the negative frequency (or the 2nd half of the DFT)
+        % resulting from the antisymmetry of odd signals
+        X(k + 1 + N/2) = X_even(k + 1) - t;
+    end
+end
