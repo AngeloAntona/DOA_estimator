@@ -3,14 +3,14 @@
 
 # MATLAB Classes Development Status
 
-| Class Name                             | Status       |
+| Class Name                            | Status       |
 |---------------------------------------|--------------------------|
-| FFT                                 | :red_circle: |
-| STFT.m                              | :yellow_circle:  |
-| stft_all_channels.m                 | :red_circle:  |
-| delay_and_sum.m                     | :red_circle: |
-| scan_angles.m                       | :red_circle:|
-| hw1.m                               | :red_circle: |
+| ULAConfig                             | :red_circle:     |
+| AudioData                             | :red_circle:     |
+| STFTProcessor                         | :red_circle:     |
+| Beamformer                            | :red_circle:     |
+| DOAEstimator                          | :red_circle:     |
+| Visualizer                            | :red_circle:     |
 
 ## Legend
 
