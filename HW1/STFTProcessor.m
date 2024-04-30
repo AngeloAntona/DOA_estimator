@@ -23,7 +23,8 @@ function [S, f, t] = STFTProcessor(x, fs, window, overlap, nfft)
     num_frames = 1 + floor((length(x) - window_length) / overlap_length);
     
     % Inizializza la matrice STFT
-    S = zeros(nfft, num_frames);
+    num_freqs = floor(nfft / 2) + 1;  % Calcola il numero di frequenze positive
+    S = zeros(num_freqs, num_frames);
     
     % Applica la STFT a ogni frame
     for i = 1:num_frames
@@ -32,17 +33,21 @@ function [S, f, t] = STFTProcessor(x, fs, window, overlap, nfft)
         
         % Applica la finestra al frame corrente
         frame = x(idx) .* window;
-        
+
         % Zero-pad il frame alla successiva potenza di due (la customFFT
         % può gestire solo segnali che hanno una lunghezza di 2^n)
-        padded_frame = [frame, zeros(1, nfft - window_length)];
+        padded_frame = [frame', zeros(1, nfft - window_length)];
         
-        % Compute the custom FFT of the padded frame and store it in the STFT matrix
-        S(:, i) = customFFT(padded_frame);
+        % Calcola la FFT del frame con zero-padding
+        X = customFFT(padded_frame);
+        
+        % Conserva solo la metà positiva dello spettro di frequenza
+        S(:, i) = X(1:num_freqs);
+
     end
     
-    % Calcola l'asse delle frequenze
-    f = linspace(0, fs, nfft);
+    % Calcola l'asse delle frequenze (solo metà positiva)
+    f = linspace(0, fs/2, num_freqs);
     
     % Calcola l'asse temporale
     t = (window_length/2 + overlap_length * (0:num_frames-1)) / fs;

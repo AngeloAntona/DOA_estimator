@@ -2,17 +2,83 @@
 ## Overview
 This README provides a comprehensive guide for implementing a Direction of Arrival (DOA) estimator in MATLAB. The implementation follows a structured approach outlined below.
 
-## Approach
-The implementation follows a modular design, employing classes to encapsulate different functionalities required for DOA estimation:
+## Functions and Classes
 
-* ULAConfig: This class stores configuration details of the Uniform Linear Array (ULA), including parameters such as microphone count, array length, sound speed, and sampling frequency.
-* AudioData: Responsible for handling multi-channel audio data, this class provides methods for loading data and performing preprocessing tasks such as normalization.
-* STFTProcessor: Short-Time Fourier Transform (STFT) is essential for frequency-domain processing. This class implements STFT functionality, including methods for performing the transform, inverse transform, and computing spectrograms.
-* Beamformer: The core of the system, this class implements the delay-and-sum beamforming algorithm. It takes configuration from ULAConfig and processed data from STFTProcessor to apply the beamforming algorithm.
-* DOAEstimator: Using the output from the Beamformer class, this class estimates the Direction of Arrival (DOA). It implements methods for DOA estimation, averaging pseudospectrum across frequencies, and visualizing results.
-* Visualizer: This class generates static plots and dynamic visualizations of DOA estimates. It includes methods for plotting pseudospectrum, sensor arrays, and creating videos showing DOA changes over time.
+1. **`customFFT(x)`**:
+   - Input: Signal `x`
+   - Output: FFT of the input signal
+   - Description: Computes the Fast Fourier Transform (FFT) of a given signal using a recursive algorithm.
 
-## Order of Implementation
+2. **`AllChannelSTFT(signal, fs, window, overlap, nfft, MicrophoneCount)`**:
+   - Inputs:
+     - `signal`: Multichannel audio signal (each column represents a microphone).
+     - `fs`: Sampling frequency of the signal.
+     - `window`: Window function applied to each frame of the STFT.
+     - `overlap`: Proportion of overlap between consecutive frames.
+     - `nfft`: Number of FFT points.
+     - `MicrophoneCount`: Number of microphones/channels in the signal.
+   - Outputs:
+     - `S_multi`: 3D array containing STFTs for each channel (frequency x time x channel).
+     - `f`: Frequency axis for the STFT.
+     - `t`: Time axis for the STFT.
+   - Description: Calculates the STFT for each channel of a multichannel signal.
+
+3. **`GetCovMatrix(S)`**:
+   - Input: 3D array `S` representing STFTs for each microphone.
+   - Output: Covariance matrix.
+   - Description: Computes the covariance matrix for multichannel signals.
+
+4. **`GetSteeringVector(theta, d, c, numMics, freq)`**:
+   - Inputs:
+     - `theta`: Direction of arrival angle in degrees.
+     - `d`: Microphone spacing in meters.
+     - `c`: Speed of sound in m/s.
+     - `numMics`: Number of microphones.
+     - `freq`: Frequency in Hz.
+   - Output: Steering vector.
+   - Description: Calculates the steering vector for a given angle and frequency.
+
+5. **`Beamform(S, d, c, Fs, numMics, theta_range)`**:
+   - Inputs:
+     - `S`: 4D matrix representing STFTs for each microphone at different time frames.
+     - `d`: Microphone spacing in meters.
+     - `c`: Speed of sound in m/s.
+     - `Fs`: Sampling frequency.
+     - `numMics`: Number of microphones.
+     - `theta_range`: Range of DOA angles.
+   - Output: Pseudospectrum over time for each DOA angle.
+   - Description: Performs beamforming to estimate the DOA using the provided STFT data.
+
+6. **`VisualizePseudospectrum(p_theta_time, theta_range, time_steps)`**:
+   - Inputs:
+     - `p_theta_time`: Pseudospectrum over time.
+     - `theta_range`: Range of DOA angles.
+     - `time_steps`: Time steps.
+   - Description: Visualizes the time-varying pseudospectrum for DOA estimation.
+
+7. **`AudioData` Class**:
+   - Properties:
+     - `Data`: Audio data.
+     - `SampleRate`: Sampling rate of the audio data.
+   - Methods:
+     - `normalize()`: Normalizes the audio data.
+
+8. **`ULAConfig` Class**:
+   - Properties:
+     - `MicrophoneCount`: Number of microphones.
+     - `ArrayLength`: Length of the microphone array in meters.
+     - `SoundSpeed`: Speed of sound in m/s.
+     - `SamplingFrequency`: Sampling frequency in Hz.
+   - Description: Defines the configuration of the uniform linear array (ULA) of microphones.
+
+## Workflow
+1. Load the multichannel audio data from a file using the `AudioData` class.
+2. Normalize the audio data.
+3. Perform STFT on the multichannel signal using `AllChannelSTFT`.
+4. Compute the covariance matrix using `GetCovMatrix`.
+5. Calculate the steering vectors for each angle and frequency.
+6. Perform beamforming using `Beamform`.
+7. Visualize the pseudospectrum over time using `VisualizePseudospectrum`.
 To ensure proper functionality and testing, the classes are developed in a sequential manner:
 
 * ULAConfig: Define and test this class to store essential configuration details for the ULA.
@@ -43,6 +109,9 @@ Spatial filtering techniques, such as the delay-and-sum beamformer, aim to enhan
 | AudioData                             | :green_circle:   |
 | customFFT                             | :green_circle:   |
 | STFTProcessor                         | :green_circle:   |
+| STFTallChannels                       | :red_circle:     | 
+| GetStearingVec                        | :red_circle:     |
+ 
 | Beamformer                            | :red_circle:     |
 | DOAEstimator                          | :red_circle:     |
 | Visualizer                            | :red_circle:     |

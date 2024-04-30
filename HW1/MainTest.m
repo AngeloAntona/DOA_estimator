@@ -1,7 +1,7 @@
-%% -------------------------------------------------- 
+%% --------------------------------------------------
 % ULAConfig Test
 clc;
-clearvars; 
+clearvars;
 close all;
 
 % Test values from the assignment
@@ -21,7 +21,7 @@ disp(ula_config);
 % AudioData Test
 
 clc;
-clearvars; 
+clearvars;
 close all;
 
 % Path to the audio file within the 'AudioFiles' directory
@@ -118,13 +118,19 @@ clc;
 clearvars;
 close all;
 
-% Genera un segnale di test
-fs = 2000; % Frequenza di campionamento
-t = 0:1/fs:1; % Tempo
-x = sin(2*pi*100*t) + sin(2*pi*200*t) + randn(size(t)); % Segnale di test
+% % Genera un segnale di test
+% fs = 2000; % Frequenza di campionamento
+% t = 0:1/fs:1; % Tempo
+% x = sin(2*pi*100*t) + sin(2*pi*200*t) + randn(size(t)); % Segnale di test
+
+filepath = 'AudioFiles/array_recordings.wav';
+% Create an instance of the AudioData class
+audio_data = AudioData(filepath);
+x = audio_data.Data(:,1);
+fs = audio_data.SampleRate;
 
 % Parametri della STFT
-window = hamming(256)'; % Finestra di Hamming
+window = hamming(256); % Finestra di Hamming
 overlap = 0.5; % Sovrapposizione del 50%
 nfft = 512; % Numero di punti della FFT
 
@@ -134,7 +140,9 @@ nfft = 512; % Numero di punti della FFT
 % Calcola la STFT con la funzione stft standard di MATLAB
 [S_matlab, f_matlab, t_matlab] = spectrogram(x, window, overlap*length(window), nfft, fs);
 
-S_custom_cropped = S_custom(1:length(S_matlab),:);
+disp(size(S_custom));
+disp(size(S_matlab));
+
 
 % Plot spectrogram from MATLAB's spectrogram function
 subplot(1,2,1);
@@ -146,7 +154,7 @@ ylabel('Frequency (Hz)');
 
 % Plot spectrogram from custom implementation
 subplot(1,2,2);
-imagesc(t_custom, f_custom, abs(S_custom_cropped));
+imagesc(t_custom, f_custom, abs(S_custom));
 colorbar;
 title('Custom Spectrogram');
 xlabel('Time (s)');
@@ -154,44 +162,110 @@ ylabel('Frequency (Hz)');
 
 
 % Confronta i risultati
-max_diff = max(abs(S_custom_cropped - S_matlab));
+max_diff = max(abs(S_custom - S_matlab));
 if max_diff < 1e-10
     disp('I risultati coincidono.');
 else
     disp('I risultati non coincidono.');
 end
 
-
 %% --------------------------------------------------
- 
+
 % Beamformer test 1
 
 clc;
 clearvars;
 close all;
 
-% Assuming ULAConfig and AudioData have been initialized appropriately
-ula = ULAConfig(8, 300, 340, 44100); % Example configuration
-audio = AudioData('AudioFiles/array_recordings.wav'); % Load audio data
+% Define ULA Configuration
+microphone_count = 16;
+array_length_cm = 45; % Total length of the array in cm
+sound_speed = 343; % Speed of sound in m/s
+sampling_frequency = 8000; % Sampling frequency in Hz
 
-% Call beamformer
-[output_signal, output_time] = Beamformer(audio, ula, 30, 44100); % Example: 30 degrees angle of arrival
+% Create an instance of ULAConfig
+ulaConfig = ULAConfig(microphone_count, array_length_cm, sound_speed, sampling_frequency);
 
-% Plot output
-plot(output_time, abs(output_signal));
-xlabel('Time (s)');
+% Load Audio Data
+filepath = 'AudioFiles/array_recordings.wav'; % Specify the path to your multichannel audio file
+audioData = AudioData(filepath);
+
+% Normalize audio data (optional, if required)
+audioData = audioData.normalize();
+
+% Specify the direction of arrival of the sound in degrees
+direction = 30; % Example: 30 degrees
+
+% Call the Beamformer function
+beamformed_output = Beamformer(audioData, ulaConfig, direction);
+
+% Plot the results
+figure;
+subplot(2, 1, 1);
+plot(audioData.Data);
+title('Original Audio Signals');
+xlabel('Sample Number');
 ylabel('Amplitude');
-title('Beamformed Signal Output');
+
+subplot(2, 1, 2);
+plot(beamformed_output);
+title(['Beamformed Output for Direction ', num2str(direction), ' degrees']);
+xlabel('Sample Number');
+ylabel('Amplitude');
+
+% Display the plot
+sgtitle('Comparison of Original and Beamformed Audio Signals');
 
 %% --------------------------------------------------
- 
-% Beamformer test 2
+
+% Beamformer test2
 
 clc;
 clearvars;
 close all;
 
-testBeamformer;
+% Define ULA Configuration
+microphone_count = 16;
+array_length_cm = 45; % Total length of the array in cm
+sound_speed = 343; % Speed of sound in m/s
+sampling_frequency = 8000; % Sampling frequency in Hz
+
+ulaConfig = ULAConfig(microphone_count, array_length_cm, sound_speed, sampling_frequency);
+
+% Example Test with Synthetic Data
+fs = 8000; % Sampling frequency
+t = 0:1/fs:1-1/fs; % Time vector
+f = 1000; % Frequency of the tone
+theta_test = 30; % Direction for test signal in degrees
+
+% Simulate a plane wave arriving at theta_test
+test_signal = sin(2 * pi * f * (t - (ulaConfig.ArrayLength * sin(deg2rad(theta_test)) / ulaConfig.SoundSpeed)));
+
+% Use this test signal in place of actual microphone data to check beamforming
+test_audioData = AudioData('');
+test_audioData.Data = repmat(test_signal, 16, 1)'; % Simulate multi-channel data
+test_audioData.SampleRate = fs;
+
+% Beamform using the test signal
+test_output = Beamformer(test_audioData, ulaConfig, theta_test);
+
+% Plot the results
+figure;
+subplot(2, 1, 1);
+plot(test_audioData.Data);
+title('Original Audio Signals');
+xlabel('Sample Number');
+ylabel('Amplitude');
+
+subplot(2, 1, 2);
+plot(test_output);
+title(['Beamformed Output for Direction ', num2str(direction), ' degrees']);
+xlabel('Sample Number');
+ylabel('Amplitude');
+
+% Display the plot
+sgtitle('Comparison of Original and Beamformed Audio Signals');
+
 
 %% --------------------------------------------------
 % DOAEstimator test
@@ -200,6 +274,129 @@ clc;
 clearvars;
 close all;
 
-testDOAEstimator;
+% Define the ULA Configuration
+microphone_count = 16;                % Number of microphones in the ULA
+array_length_cm = 45;                 % Total length of the array in cm
+sound_speed = 343;                    % Speed of sound in m/s
+sampling_frequency = 8000;            % Sampling frequency in Hz
+
+% Create an instance of ULAConfig
+ulaConfig = ULAConfig(microphone_count, array_length_cm, sound_speed, sampling_frequency);
+
+% Parameters for the STFT and DOA estimation
+frameLength = 1024;                   % Length of each frame for STFT
+frameOverlap = 512;                   % Overlap between frames
+directionRange = [-90, 90];           % Range of directions to search for DOA
+stepSize = 1;                         % Step size in degrees for the DOA estimation
+
+% Path to the audio file
+audioFilePath = 'AudioFiles/array_recordings.wav';
+
+% Function to track and estimate the DOA of a moving source
+trackMovingSource(audioFilePath, ulaConfig, frameLength, frameOverlap, directionRange, stepSize);
+
+% Note: Ensure that all functions like trackMovingSource, STFTProcessor,
+% DOAEstimator, and necessary classes are properly defined and implemented
+% as discussed in previous messages.
+
+%% --------------------------------------------------
+% AllChannelSTFT test
+
+clc;
+clearvars;
+close all;
+
+filepath = 'AudioFiles/array_recordings.wav';
+% Create an instance of the AudioData class
+audio_data = AudioData(filepath);
+multichannel_signal = audio_data.Data;
+fs = audio_data.SampleRate;
+
+window = hann(256); % example window function
+overlap = 0.5; % 50% overlap
+nfft = 512; % number of FFT points
+MicrophoneCount = 16; % number of microphones
+
+% Calculate the multichannel STFT
+[S_multi, f, t] = AllChannelSTFT(multichannel_signal, fs, window, overlap, nfft, MicrophoneCount);
+
+figure('Position', [100, 0, 1000, 800]);    % [left, bottom, width, height]
+
+for m = 1:MicrophoneCount
+
+    subplot(ceil(MicrophoneCount / 4), 4, m); % divide the plot in 4 rows
+    spectrogram = abs(S_multi(:, :, m)); % STFT modulus in order to visualize the amplitude
+    imagesc(t, f, 20*log10(spectrogram)); % amplitude algorhitm
+    axis xy;
+    xlabel('Time (s)');
+    ylabel('Frequency (Hz)');
+    title(['Microphone ', num2str(m)]);
+    colorbar;
+
+end
+
+colormap hot;
 
 
+%% --------------------------------------------------
+% GetCovMatrix test
+
+clc;
+clearvars;
+close all;
+
+
+% Numero di frequenze, frame e microfoni
+numFreqs = 10;
+numFrames = 100;
+numMics = 3;
+
+% Genera dati STFT sintetici per i microfoni
+% Assumiamo che ogni elemento sia complesso
+S = rand(numFreqs, numFrames, numMics) + 1i * rand(numFreqs, numFrames, numMics);
+
+% Chiama la funzione GetCovMatrix
+R = GetCovMatrix(S);
+
+% Stampa le matrici di covarianza per ogni frequenza
+for f = 1:numFreqs
+    fprintf('Matrice di covarianza per la frequenza %d:\n', f);
+    disp(R(:,:,f));
+end
+
+% Verifica la correttezza del calcolo verificando proprietà come l'hermitianità
+for f = 1:numFreqs
+    if ishermitian(R(:,:,f))
+        fprintf('La matrice di covarianza alla frequenza %d è hermitiana.\n', f);
+    else
+        fprintf('Errore: la matrice di covarianza alla frequenza %d non è hermitiana.\n', f);
+    end
+end
+
+%% --------------------------------------------------
+% GetCovMatrix test
+
+clc;
+clearvars;
+close all;
+
+filepath = 'AudioFiles/array_recordings.wav';
+% Create an instance of the AudioData class
+audio_data = AudioData(filepath);
+audio_data.normalize;
+multichannel_signal = audio_data.Data;
+fs = audio_data.SampleRate;
+
+window = hann(256); % example window function
+overlap = 0.5; % 50% overlap
+nfft = 512; % number of FFT points
+MicrophoneCount = 16; % number of microphones
+
+thetaRange = linspace(-90,90,180);
+d=0.45/15;
+
+[S_multi, f, t] = AllChannelSTFT(multichannel_signal, fs, window, overlap, nfft, MicrophoneCount);
+disp("Fine STFT, inizio BeamForm");
+p_theta_time = Beamform(S_multi, d, 343, fs, MicrophoneCount, thetaRange);
+disp("Fine Beanform, inizio VisualizePseudospectrum");
+VisualizePseudospectrum(p_theta_time, thetaRange, t);
