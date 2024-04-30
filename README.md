@@ -104,6 +104,9 @@ Spatial filtering techniques, such as the delay-and-sum beamformer, aim to enhan
 | GetCovMatrix                          | :yellow_circle:  |
 | Beamformer                            | :yellow_circle:  |
 | VisualizePseudospectrum               | :yellow_circle:  |
+| DOAEstimator                          | :red_circle:     |
+| PlotDOA                               | :red_circle:     |
+| VisualizePseudospectrum               | :yellow_circle:  |
 | ULAConfig                             | :green_circle:   |
 | AudioData                             | :green_circle:   |
 
