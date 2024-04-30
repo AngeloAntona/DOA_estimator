@@ -5,9 +5,10 @@
 
 | Class Name                            | Status       |
 |---------------------------------------|--------------------------|
-| ULAConfig                             | :red_circle:     |
-| AudioData                             | :red_circle:     |
-| STFTProcessor                         | :red_circle:     |
+| ULAConfig                             | :green_circle:   |
+| AudioData                             | :green_circle:   |
+| customFFT                             | :green_circle:   |
+| STFTProcessor                         | :green_circle:   |
 | Beamformer                            | :red_circle:     |
 | DOAEstimator                          | :red_circle:     |
 | Visualizer                            | :red_circle:     |
