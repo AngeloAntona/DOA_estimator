@@ -1,20 +1,32 @@
 function [p_theta_time] = Beamform(S, d, c, Fs, numMics, theta_range)
-    % Input S is now assumed to be a 4D matrix: [numFreqs, numFrames, numMics, numTimeFrames]
+    % Inputs:
+    % S - 3D matrix of STFT results [frequency x time x channel (microphone)]
+    % d - microphone spacing in meters
+    % c - speed of sound in m/s
+    % Fs - sampling frequency
+    % numMics - number of microphones in the array
+    % theta_range - array of angles to compute DOA estimates
 
-    [numFreqs, numFrames, numMics, numTimeFrames] = size(S);
-    p_theta_time = zeros(length(theta_range), numTimeFrames); % Results for each time frame
+    [numFreqs, numTimeFrames, ~] = size(S);
+    p_theta_time = zeros(length(theta_range), numTimeFrames);
+    freqs = linspace(0, Fs/2, numFreqs); % Frequency vector outside the loop
 
     for timeIdx = 1:numTimeFrames
-        R = GetCovMatrix(S(:,:,:,timeIdx));  % Calculate the covariance matrix for each time frame
-        numFreqs = size(R, 3);  % Number of frequency bins from the covariance matrix
-        freqs = linspace(0, Fs/2, numFreqs);  % Frequency vector to match the covariance matrix
+        % Extract the slice for the current time frame across all frequencies and microphones
+        S_time = squeeze(S(:, timeIdx, :)); % S_time has dimensions [numFreqs x numMics]
+
+        % Calculate the covariance matrix for this time frame
+        R = GetCovMatrix(S_time);
 
         for i = 1:length(theta_range)
             for f = 1:numFreqs
-                a = GetSteeringVector(theta_range(i), d, c, numMics, freqs(f));  % Get steering vector for each frequency
-                p_theta_time(i, timeIdx) = p_theta_time(i, timeIdx) + abs(a' * R(:,:,f) * a);  % Accumulate power
+                % Compute the steering vector for the current angle and frequency
+                a = GetSteeringVector(theta_range(i), d, c, numMics, freqs(f));
+                % Beamforming power accumulation
+                p_theta_time(i, timeIdx) = p_theta_time(i, timeIdx) + abs(a' * R(:,:,f) * a);
             end
-            p_theta_time(i, timeIdx) = p_theta_time(i, timeIdx) / (numMics^2);  % Normalize by number of microphones squared
+            % Normalize the accumulated power by the number of microphones squared
+            p_theta_time(i, timeIdx) = p_theta_time(i, timeIdx) / numMics^2;
         end
     end
 

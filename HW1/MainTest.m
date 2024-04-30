@@ -387,9 +387,9 @@ audio_data.normalize;
 multichannel_signal = audio_data.Data;
 fs = audio_data.SampleRate;
 
-window = hann(256); % example window function
-overlap = 0.5; % 50% overlap
-nfft = 512; % number of FFT points
+window = hann(1024); % example window function
+overlap = 0.8; % 50% overlap
+nfft = 1024; % number of FFT points
 MicrophoneCount = 16; % number of microphones
 
 thetaRange = linspace(-90,90,180);
@@ -400,3 +400,20 @@ disp("Fine STFT, inizio BeamForm");
 p_theta_time = Beamform(S_multi, d, 343, fs, MicrophoneCount, thetaRange);
 disp("Fine Beanform, inizio VisualizePseudospectrum");
 VisualizePseudospectrum(p_theta_time, thetaRange, t);
+
+% Assuming p_theta_time and thetaRange are already computed
+doa_estimates = DOAEstimator(p_theta_time, thetaRange);
+
+% Optionally, you can display or further process the DOA estimates
+disp('Estimated DOAs over time:');
+disp(doa_estimates);
+
+%%
+
+% Estimating DOAs
+doa_estimates = DOAEstimator(p_theta_time, thetaRange);
+
+% Display the DOA estimates
+plot(doa_estimates);
+title('Estimated DOAs over time:');
+
