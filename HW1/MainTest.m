@@ -404,16 +404,16 @@ VisualizePseudospectrum(p_theta_time, thetaRange, t);
 % Assuming p_theta_time and thetaRange are already computed
 doa_estimates = DOAEstimator(p_theta_time, thetaRange);
 
-% Optionally, you can display or further process the DOA estimates
+% Optionally can display the DOA estimates
 disp('Estimated DOAs over time:');
 disp(doa_estimates);
 
-%%
 
 % Estimating DOAs
 doa_estimates = DOAEstimator(p_theta_time, thetaRange);
 
 % Display the DOA estimates
+figure(2);
 plot(doa_estimates);
 title('Estimated DOAs over time:');
 
