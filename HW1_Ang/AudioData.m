@@ -7,7 +7,9 @@ classdef AudioData
     methods
         function obj = AudioData(filepath)
             % Constructor for AudioData that loads audio from the specified filepath
-            [obj.Data, obj.SampleRate] = audioread(filepath);
+            if filepath ~= "" 
+                [obj.Data, obj.SampleRate] = audioread(filepath);
+            end
         end
         
         function obj = normalize(obj)

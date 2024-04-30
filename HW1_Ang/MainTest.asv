@@ -53,7 +53,7 @@ disp('First 100 samples from the first channel after normalization:');
 disp(audio_data.Data(1:100, 1));
 
 %% --------------------------------------------------
-% costum FFT test (NO NFFT)
+% costum FFT test
 
 clc;
 clearvars;
@@ -109,33 +109,6 @@ grid on;
 assert(all(abs(X_custom - X_matlab) < 1e-6), 'The results differ more than the acceptable tolerance.');
 fprintf('The custom FFT implementation matches MATLAB''s fft function within the tolerance.\n');
 
-%% --------------------------------------------------
-% costum FFT test (WITH NFFT)
-
-clc;
-clearvars;
-close all;
-
-% Genera un segnale di test
-fs = 1000; % Frequenza di campionamento
-t = 0:1/fs:1; % Tempo
-x = sin(2*pi*100*t) + sin(2*pi*200*t) + randn(size(t)); % Segnale di test
-
-% Calcola la FFT con la tua implementazione personalizzata
-N = 2^nextpow2(length(x));
-X_custom = customFFT(x, N);
-
-% Calcola la FFT con la funzione fft standard di MATLAB
-X_matlab = fft(x,);
-
-% Confronta i risultati
-max_diff = max(abs(X_custom - X_matlab));
-if max_diff < 1e-10
-    disp('I risultati coincidono.');
-else
-    disp('I risultati non coincidono.');
-end
-
 
 %% --------------------------------------------------
 
@@ -146,7 +119,7 @@ clearvars;
 close all;
 
 % Genera un segnale di test
-fs = 1000; % Frequenza di campionamento
+fs = 2000; % Frequenza di campionamento
 t = 0:1/fs:1; % Tempo
 x = sin(2*pi*100*t) + sin(2*pi*200*t) + randn(size(t)); % Segnale di test
 
@@ -163,13 +136,22 @@ nfft = 512; % Numero di punti della FFT
 
 S_custom_cropped = S_custom(1:length(S_matlab),:);
 
-figure(1);
+% Plot spectrogram from MATLAB's spectrogram function
 subplot(1,2,1);
-plot(abs(S_matlab));
-title("MatlabSTFT");
+imagesc(t_matlab, f_matlab, abs(S_matlab));
+colorbar;
+title('MATLAB Spectrogram');
+xlabel('Time (s)');
+ylabel('Frequency (Hz)');
+
+% Plot spectrogram from custom implementation
 subplot(1,2,2);
-plot(abs(S_custom_cropped));
-title("Custom STFT");
+imagesc(t_custom, f_custom, abs(S_custom_cropped));
+colorbar;
+title('Custom Spectrogram');
+xlabel('Time (s)');
+ylabel('Frequency (Hz)');
+
 
 % Confronta i risultati
 max_diff = max(abs(S_custom_cropped - S_matlab));
@@ -178,3 +160,69 @@ if max_diff < 1e-10
 else
     disp('I risultati non coincidono.');
 end
+
+
+%% --------------------------------------------------
+
+% Beamformer test
+
+clc;
+clearvars;
+close all;
+
+% Test Script for Beamformer Class
+
+% Constants
+fs = 8000; % Sampling frequency in Hz
+c = 340;  % Speed of sound in m/s (approx. at room temperature)
+microphone_count = 8;
+array_length = 1.2; % Array length in meters
+theta = pi/4; % Direction of arrival in radians (45 degrees)
+duration = 1; % Duration of the signal in seconds
+frequency = 1000; % Frequency of the sinusoidal signal
+
+% Create ULA Configuration
+ulaConfig = ULAConfig(microphone_count, array_length*100, c, fs);
+
+% Generate a sinusoidal signal
+t = 0:1/fs:duration-1/fs;
+signal = sin(2*pi*frequency*t);
+
+% Simulate the arrival of this signal at different microphones
+% Assume linear array along x-axis, source from theta direction
+d = array_length / (microphone_count - 1);
+delays = (0:(microphone_count-1)) * d * sin(theta) / c; % Time delays for each mic
+data = zeros(length(signal), microphone_count);
+
+for mic = 1:microphone_count
+    delay_samples = round(delays(mic) * fs);
+    data(:, mic) = circshift(signal', delay_samples); % Circular shift approximates delay
+end
+
+% Create AudioData instance
+audioData = AudioData();
+
+% Create Beamformer instance
+beamformer = Beamformer(ulaConfig, audioData);
+
+% Apply delay and sum beamforming
+beamformed_output = beamformer.delay_and_sum(theta);
+
+% Plot original and beamformed signal
+figure;
+subplot(2,1,1);
+plot(t, signal);
+title('Original Signal');
+xlabel('Time (s)');
+ylabel('Amplitude');
+
+subplot(2,1,2);
+plot(t, beamformed_output);
+title('Beamformed Output');
+xlabel('Time (s)');
+ylabel('Amplitude');
+
+% Simple check on the output
+% The output should resemble the input but potentially with different amplitude
+fprintf('Testing completed.\n');
+

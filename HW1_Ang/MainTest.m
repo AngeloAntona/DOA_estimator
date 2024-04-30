@@ -119,7 +119,7 @@ clearvars;
 close all;
 
 % Genera un segnale di test
-fs = 1000; % Frequenza di campionamento
+fs = 2000; % Frequenza di campionamento
 t = 0:1/fs:1; % Tempo
 x = sin(2*pi*100*t) + sin(2*pi*200*t) + randn(size(t)); % Segnale di test
 
@@ -160,3 +160,46 @@ if max_diff < 1e-10
 else
     disp('I risultati non coincidono.');
 end
+
+
+%% --------------------------------------------------
+ 
+% Beamformer test 1
+
+clc;
+clearvars;
+close all;
+
+% Assuming ULAConfig and AudioData have been initialized appropriately
+ula = ULAConfig(8, 300, 340, 44100); % Example configuration
+audio = AudioData('AudioFiles/array_recordings.wav'); % Load audio data
+
+% Call beamformer
+[output_signal, output_time] = Beamformer(audio, ula, 30, 44100); % Example: 30 degrees angle of arrival
+
+% Plot output
+plot(output_time, abs(output_signal));
+xlabel('Time (s)');
+ylabel('Amplitude');
+title('Beamformed Signal Output');
+
+%% --------------------------------------------------
+ 
+% Beamformer test 2
+
+clc;
+clearvars;
+close all;
+
+testBeamformer;
+
+%% --------------------------------------------------
+% DOAEstimator test
+
+clc;
+clearvars;
+close all;
+
+testDOAEstimator;
+
+

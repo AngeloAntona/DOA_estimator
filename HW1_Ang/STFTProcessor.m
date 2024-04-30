@@ -1,3 +1,4 @@
+
 function [S, f, t] = STFTProcessor(x, fs, window, overlap, nfft)
     % Calcola la STFT utilizzando la funzione fft.
     % Parametri:
