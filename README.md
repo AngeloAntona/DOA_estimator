@@ -79,14 +79,6 @@ This README provides a comprehensive guide for implementing a Direction of Arriv
 5. Calculate the steering vectors for each angle and frequency.
 6. Perform beamforming using `Beamform`.
 7. Visualize the pseudospectrum over time using `VisualizePseudospectrum`.
-To ensure proper functionality and testing, the classes are developed in a sequential manner:
-
-* ULAConfig: Define and test this class to store essential configuration details for the ULA.
-* AudioData: Implement methods for loading and preprocessing audio data, ensuring correct data preparation.
-* STFTProcessor: Develop STFT functionality and verify transformation accuracy using synthetic data.
-* Beamformer: Implement the delay-and-sum beamforming algorithm and independently test its functionality.
-* DOAEstimator: Develop methods for DOA estimation, relying on beamformer output, and ensure accurate estimation.
-* Visualizer: Implement visualization methods using data from previous classes to generate required plots and videos.
 
 ## Homework Assignment Details
 The implementation is guided by a homework assignment on acoustic source localization, which involves:
