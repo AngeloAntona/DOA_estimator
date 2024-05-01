@@ -1,7 +1,7 @@
-function GetSingleFrame(doaFrame, d, MicrophoneCount, frameNo, outputPath)
+function GetSingleFrame(doaFrame, d, MicrophoneCount, frameNo)
     % Define the ULA geometry
-    x_coords = 0:d:(MicrophoneCount-1)*d; % X coordinates of the array elements
-    y_coords = zeros(1, MicrophoneCount); % Y coordinates of the array elements
+    x_coords = 0:d:(MicrophoneCount-1)*d; % Coordinate X degli elementi dell'array
+    y_coords = zeros(1, MicrophoneCount); % Coordinate Y degli elementi dell'array
 
     % Convert DOA from degrees to radians
     doaRad = deg2rad(doaFrame);
@@ -25,6 +25,6 @@ function GetSingleFrame(doaFrame, d, MicrophoneCount, frameNo, outputPath)
     title(sprintf('ULA Setup and Estimated DOA - Frame %d', frameNo));
 
     % Save the current frame as an image
-    filename = sprintf('%sFrame_%04d.png', outputPath, frameNo);
+    filename = sprintf('Frame_%04d.png', frameNo);
     saveas(gcf, filename);
 end

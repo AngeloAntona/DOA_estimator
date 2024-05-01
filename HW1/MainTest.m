@@ -419,8 +419,27 @@ title('Estimated DOAs over time:');
 
 %%
 
-GetSingleFrame(doa_estimates(100), d, MicrophoneCount);
+outputPath = './VideoFrames/'; % Relative path to the VideoFrames folder
 
-% PlotDOA(doa_estimates, d, MicrophoneCount)
+% Ensure the directory exists, create if it does not
+if ~exist(outputPath, 'dir')
+    mkdir(outputPath);
+end
+
+% Example call of GetSingleFrame
+% Assuming 'doa_estimates' is an array of DOA estimates
+figure;
+hold on;
+grid on;
+axis equal;
+
+for k = 1:length(doa_estimates)
+    GetSingleFrame(doa_estimates(k), d, MicrophoneCount, k, outputPath);
+    clf; % Clears the current figure for the next frame
+end
+
+hold off;
+close;
+
 
 
