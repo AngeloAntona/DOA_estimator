@@ -100,11 +100,12 @@ Spatial filtering techniques, such as the delay-and-sum beamformer, aim to enhan
 | customFFT                             | :green_circle:   |
 | STFTProcessor                         | :green_circle:   |
 | AllChannelsSTFT                       | :green_circle:   | 
-| GetSteeringVector                     | :yellow_circle:  |
-| GetCovMatrix                          | :yellow_circle:  |
-| Beamform                              | :yellow_circle:  |
-| VisualizePseudospectrum               | :yellow_circle:  |
-| DOAEstimator                          | :yellow_circle:  |
+| GetSteeringVector                     | :green_circle:  |
+| GetCovMatrix                          | :green_circle:  |
+| Beamform                              | :green_circle:   |
+| VisualizePseudospectrum               | :green_circle:   |
+| DOAEstimator                          | :green_circle:   |
+| GetSingleFrame                        | :green_circle:   |
 | PlotDOA                               | :red_circle:     |
 | ULAConfig                             | :green_circle:   |
 | AudioData                             | :green_circle:   |
