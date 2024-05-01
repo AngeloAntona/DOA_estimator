@@ -388,7 +388,7 @@ multichannel_signal = audio_data.Data;
 fs = audio_data.SampleRate;
 
 window = hann(1024); % example window function
-overlap = 0.8; % 80% overlap
+overlap = 0.8; % 50% overlap
 nfft = 1024; % number of FFT points
 MicrophoneCount = 16; % number of microphones
 
@@ -418,9 +418,6 @@ plot(doa_estimates);
 title('Estimated DOAs over time:');
 
 %%
-
-GetSingleFrame(doa_estimates(100), d, MicrophoneCount);
-
-% PlotDOA(doa_estimates, d, MicrophoneCount)
+PlotDOA(doa_estimates(, d, numMics)
 
 
