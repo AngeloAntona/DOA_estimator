@@ -4,7 +4,7 @@
 This project implements Direction of Arrival (DOA) estimation for audio signals using a microphone array. The system processes audio data to estimate the direction from which the sound originates, visualizes the results, and compiles them into a video presentation.
 
 ## Class and Function Descriptions
-![Alt text](/ReadmeFiles/Main%20Diagram.png)
+![Alt text](/ReadmeFiles/MainDiagram.png)
 
 ### Main
 Orchestrates the entire process of DOA estimation including audio data handling, signal processing, beamforming, visualization, and video generation.
