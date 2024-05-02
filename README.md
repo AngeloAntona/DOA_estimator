@@ -4,6 +4,7 @@
 This project implements Direction of Arrival (DOA) estimation for audio signals using a microphone array. The system processes audio data to estimate the direction from which the sound originates, visualizes the results, and compiles them into a video presentation.
 
 ## Class and Function Descriptions
+![Alt text](/ReadmeFiles/Main%20Diagram.png)
 
 ### Main
 Orchestrates the entire process of DOA estimation including audio data handling, signal processing, beamforming, visualization, and video generation.
@@ -32,7 +33,7 @@ Orchestrates the entire process of DOA estimation including audio data handling,
   - `f`: Frequency axis for STFT.
   - `t`: Time axis for STFT.
 
-#### STFTProcessor
+### STFTProcessor
 - **Purpose**: Processes the Short-Time Fourier Transform of audio signals.
 - **Inputs**:
   - Same as AllChannelSTFT.
@@ -40,7 +41,7 @@ Orchestrates the entire process of DOA estimation including audio data handling,
   - `S`: STFT matrix for a single channel.
   - Detailed frequency and time vectors.
 
-#### customFFT
+### customFFT
 - **Purpose**: Computes the Fast Fourier Transform using a custom implementation.
 - **Inputs**:
   - `x`: Signal array.
@@ -59,14 +60,14 @@ Orchestrates the entire process of DOA estimation including audio data handling,
 - **Outputs**:
   - `p_theta_time`: Power values for each DOA angle over time.
 
-#### GetCovMatrix
+### GetCovMatrix
 - **Purpose**: Computes the covariance matrix from STFT results.
 - **Inputs**:
   - `S_time`: STFT results for a specific time frame.
 - **Outputs**:
   - `R`: Covariance matrix for the given time frame.
 
-#### GetSteeringVector
+### GetSteeringVector
 - **Purpose**: Generates steering vectors for beamforming calculations.
 - **Inputs**:
   - `theta`, `d`, `c`, `numMics`, `freq`: DOA angle, microphone spacing, speed of sound, number of microphones, frequency.
@@ -100,7 +101,7 @@ Orchestrates the entire process of DOA estimation including audio data handling,
 - **Outputs**:
   - Saves frames as images in the specified directory.
 
-#### GetSingleFrame
+### GetSingleFrame
 - **Purpose**: Generates a single frame showing the DOA estimate using an arrow representation.
 - **Inputs**:
   - Same as FramesGenerator plus `frameNo`: the current frame number.
@@ -128,7 +129,7 @@ The implementation is guided by a homework assignment on acoustic source localiz
 
 ## Development Status
 
-| Class Name                | Status          |
+| Class/Function Name       | Status          |
 |---------------------------|-----------------|
 | main                      | :green_circle:  |
 | audiodata                 | :green_circle:  |
