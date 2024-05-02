@@ -15,8 +15,6 @@ classdef AudioData
         function obj = normalize(obj)
             % Method to normalize audio data
             obj.Data = obj.Data / max(abs(obj.Data), [], 'all');
-        end
-        
-        % Other preprocessing methods can be added here as needed
+        end        
     end
 end

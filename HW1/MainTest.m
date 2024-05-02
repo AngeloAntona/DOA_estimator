@@ -421,25 +421,13 @@ title('Estimated DOAs over time:');
 
 outputPath = './VideoFrames/'; % Relative path to the VideoFrames folder
 
-% Ensure the directory exists, create if it does not
-if ~exist(outputPath, 'dir')
-    mkdir(outputPath);
-end
+FramesGenerator(doa_estimates, d, MicrophoneCount, outputPath);
 
-% Example call of GetSingleFrame
-% Assuming 'doa_estimates' is an array of DOA estimates
-figure;
-hold on;
-grid on;
-axis equal;
+%%
 
-for k = 1:length(doa_estimates)
-    GetSingleFrame(doa_estimates(k), d, MicrophoneCount, k, outputPath);
-    clf; % Clears the current figure for the next frame
-end
+videoFilename = 'doa_video.mp4'; % Name of the video file to be created
+frameRate = 10; % Desired frame rate for the video
 
-hold off;
-close;
-
-
+% Call the CreateVideoFromFrames function
+VideoGenerator(doa_estimates, outputPath, videoFilename, frameRate);
 
