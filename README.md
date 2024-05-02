@@ -1,84 +1,122 @@
 # CMLS_HW1
+
 ## Overview
-This README provides a comprehensive guide for implementing a Direction of Arrival (DOA) estimator in MATLAB. The implementation follows a structured approach outlined below.
+This project implements Direction of Arrival (DOA) estimation for audio signals using a microphone array. The system processes audio data to estimate the direction from which the sound originates, visualizes the results, and compiles them into a video presentation.
 
-## Functions and Classes
+## Class and Function Descriptions
 
-1. **`customFFT(x)`**:
-   - Input: Signal `x`
-   - Output: FFT of the input signal
-   - Description: Computes the Fast Fourier Transform (FFT) of a given signal using a recursive algorithm.
+### Main
+Orchestrates the entire process of DOA estimation including audio data handling, signal processing, beamforming, visualization, and video generation.
 
-2. **`AllChannelSTFT(signal, fs, window, overlap, nfft, MicrophoneCount)`**:
-   - Inputs:
-     - `signal`: Multichannel audio signal (each column represents a microphone).
-     - `fs`: Sampling frequency of the signal.
-     - `window`: Window function applied to each frame of the STFT.
-     - `overlap`: Proportion of overlap between consecutive frames.
-     - `nfft`: Number of FFT points.
-     - `MicrophoneCount`: Number of microphones/channels in the signal.
-   - Outputs:
-     - `S_multi`: 3D array containing STFTs for each channel (frequency x time x channel).
-     - `f`: Frequency axis for the STFT.
-     - `t`: Time axis for the STFT.
-   - Description: Calculates the STFT for each channel of a multichannel signal.
+### AudioData
+- **Purpose**: Manages loading and normalizing audio data.
+- **Inputs**:
+  - `filepath`: Path to the audio file.
+- **Outputs**:
+  - `Data`: Normalized audio data.
+  - `SampleRate`: Sampling rate of the audio data.
+- **Methods**:
+  - `normalize()`: Normalizes the audio data to ensure consistent amplitude levels across the dataset.
 
-3. **`GetCovMatrix(S)`**:
-   - Input: 3D array `S` representing STFTs for each microphone.
-   - Output: Covariance matrix.
-   - Description: Computes the covariance matrix for multichannel signals.
+### AllChannelSTFT
+- **Purpose**: Calculates the Short-Time Fourier Transform (STFT) for each channel in a multichannel audio signal.
+- **Inputs**:
+  - `signal`: Multichannel audio signal.
+  - `fs`: Sampling frequency.
+  - `window`: Window function for STFT.
+  - `overlap`: Overlap between consecutive frames.
+  - `nfft`: Number of FFT points.
+  - `MicrophoneCount`: Number of channels/microphones.
+- **Outputs**:
+  - `S_multi`: 3D array containing STFT results for each channel.
+  - `f`: Frequency axis for STFT.
+  - `t`: Time axis for STFT.
 
-4. **`GetSteeringVector(theta, d, c, numMics, freq)`**:
-   - Inputs:
-     - `theta`: Direction of arrival angle in degrees.
-     - `d`: Microphone spacing in meters.
-     - `c`: Speed of sound in m/s.
-     - `numMics`: Number of microphones.
-     - `freq`: Frequency in Hz.
-   - Output: Steering vector.
-   - Description: Calculates the steering vector for a given angle and frequency.
+#### STFTProcessor
+- **Purpose**: Processes the Short-Time Fourier Transform of audio signals.
+- **Inputs**:
+  - Same as AllChannelSTFT.
+- **Outputs**:
+  - `S`: STFT matrix for a single channel.
+  - Detailed frequency and time vectors.
 
-5. **`Beamform(S, d, c, Fs, numMics, theta_range)`**:
-   - Inputs:
-     - `S`: 4D matrix representing STFTs for each microphone at different time frames.
-     - `d`: Microphone spacing in meters.
-     - `c`: Speed of sound in m/s.
-     - `Fs`: Sampling frequency.
-     - `numMics`: Number of microphones.
-     - `theta_range`: Range of DOA angles.
-   - Output: Pseudospectrum over time for each DOA angle.
-   - Description: Performs beamforming to estimate the DOA using the provided STFT data.
+#### customFFT
+- **Purpose**: Computes the Fast Fourier Transform using a custom implementation.
+- **Inputs**:
+  - `x`: Signal array.
+- **Outputs**:
+  - `X`: FFT result as an array.
 
-6. **`VisualizePseudospectrum(p_theta_time, theta_range, time_steps)`**:
-   - Inputs:
-     - `p_theta_time`: Pseudospectrum over time.
-     - `theta_range`: Range of DOA angles.
-     - `time_steps`: Time steps.
-   - Description: Visualizes the time-varying pseudospectrum for DOA estimation.
+### Beamform
+- **Purpose**: Performs beamforming to estimate power at different DOA angles using the STFT results.
+- **Inputs**:
+  - `S`: STFT results.
+  - `d`: Microphone spacing.
+  - `c`: Speed of sound.
+  - `Fs`: Sampling frequency.
+  - `numMics`: Number of microphones.
+  - `theta_range`: Range of DOA angles.
+- **Outputs**:
+  - `p_theta_time`: Power values for each DOA angle over time.
 
-7. **`AudioData` Class**:
-   - Properties:
-     - `Data`: Audio data.
-     - `SampleRate`: Sampling rate of the audio data.
-   - Methods:
-     - `normalize()`: Normalizes the audio data.
+#### GetCovMatrix
+- **Purpose**: Computes the covariance matrix from STFT results.
+- **Inputs**:
+  - `S_time`: STFT results for a specific time frame.
+- **Outputs**:
+  - `R`: Covariance matrix for the given time frame.
 
-8. **`ULAConfig` Class**:
-   - Properties:
-     - `MicrophoneCount`: Number of microphones.
-     - `ArrayLength`: Length of the microphone array in meters.
-     - `SoundSpeed`: Speed of sound in m/s.
-     - `SamplingFrequency`: Sampling frequency in Hz.
-   - Description: Defines the configuration of the uniform linear array (ULA) of microphones.
+#### GetSteeringVector
+- **Purpose**: Generates steering vectors for beamforming calculations.
+- **Inputs**:
+  - `theta`, `d`, `c`, `numMics`, `freq`: DOA angle, microphone spacing, speed of sound, number of microphones, frequency.
+- **Outputs**:
+  - `a`: Steering vector for the given parameters.
 
-## Workflow
-1. Load the multichannel audio data from a file using the `AudioData` class.
-2. Normalize the audio data.
-3. Perform STFT on the multichannel signal using `AllChannelSTFT`.
-4. Compute the covariance matrix using `GetCovMatrix`.
-5. Calculate the steering vectors for each angle and frequency.
-6. Perform beamforming using `Beamform`.
-7. Visualize the pseudospectrum over time using `VisualizePseudospectrum`.
+### DOAEstimator
+- **Purpose**: Estimates the Direction of Arrival based on the beamformed output for each time frame.
+- **Inputs**:
+  - `p_theta_time`: Matrix of power values for each angle and time frame.
+  - `theta_range`: Range of DOA angles.
+- **Outputs**:
+  - `doa_estimates`: Array containing the estimated DOA for each time frame.
+
+### VisualizePseudospectrum
+- **Purpose**: Visualizes the pseudospectrum of the DOA estimation.
+- **Inputs**:
+  - `p_theta_time`: Power values for each angle and time frame.
+  - `theta_range`: DOA angles.
+  - `time_steps`: Time intervals of the data.
+- **Outputs**:
+  - Generates a plot of the pseudospectrum over time.
+
+### FramesGenerator
+- **Purpose**: Generates visual frames representing DOA estimates.
+- **Inputs**:
+  - `doa_estimates`: Estimated DOA for each time frame.
+  - `d`: Microphone spacing.
+  - `MicrophoneCount`: Number of microphones.
+  - `outputPath`: Directory for storing frames.
+- **Outputs**:
+  - Saves frames as images in the specified directory.
+
+#### GetSingleFrame
+- **Purpose**: Generates a single frame showing the DOA estimate using an arrow representation.
+- **Inputs**:
+  - Same as FramesGenerator plus `frameNo`: the current frame number.
+- **Outputs**:
+  - Saves the generated frame as an image file.
+
+### VideoGenerator
+- **Purpose**: Creates a video from generated image frames.
+- **Inputs**:
+  - `doa_estimates`: Array of DOA estimates.
+  - `outputPath`: Path where images are stored.
+  - `videoFilename`: Output filename for the video.
+  - `frameRate`: Frame rate for the video.
+- **Outputs**:
+  - Compiles and saves the final video file.
+
 
 ## Homework Assignment Details
 The implementation is guided by a homework assignment on acoustic source localization, which involves:
@@ -88,27 +126,24 @@ The implementation is guided by a homework assignment on acoustic source localiz
 * Depicting a ULA setup displaying each sensor and estimated DOAs as arrows pointing in the direction of the source position.
 * Creating a video showing the arrows appearing for each time frame.
 
-## Theoretical Background
-Uniform Linear Arrays (ULA) are commonly used for microphone positioning. They consist of microphones positioned in a linear array with a constant distance between adjacent microphones. The DOA can be derived as a function of the angle θ, where τk represents the time delay for the k-th microphone.
-
-Spatial filtering techniques, such as the delay-and-sum beamformer, aim to enhance signals from a specific direction while attenuating signals from other directions. This technique involves linearly combining microphone signals with specific weights to achieve the desired spatial filtering.
-
 ## Development Status
 
-| Class Name                            | Status       |
-|---------------------------------------|--------------------------|
-| customFFT                             | :green_circle:   |
-| STFTProcessor                         | :green_circle:   |
-| AllChannelsSTFT                       | :green_circle:   | 
-| GetSteeringVector                     | :green_circle:  |
-| GetCovMatrix                          | :green_circle:  |
-| Beamform                              | :green_circle:   |
-| VisualizePseudospectrum               | :green_circle:   |
-| DOAEstimator                          | :green_circle:   |
-| GetSingleFrame                        | :green_circle:   |
-| PlotDOA                               | :red_circle:     |
-| ULAConfig                             | :green_circle:   |
-| AudioData                             | :green_circle:   |
+| Class Name                | Status          |
+|---------------------------|-----------------|
+| main                      | :green_circle:  |
+| audiodata                 | :green_circle:  |
+| AllChannelSTFT            | :green_circle:  |
+| STFTProcessor             | :green_circle:  |
+| customFFT                 | :green_circle:  |
+| Beamform                  | :green_circle:  |
+| GetCovMatrix              | :green_circle:  |
+| GetSteeringVector         | :green_circle:  |
+| VisualizePseudospectrum   | :green_circle:  |
+| GetSingleFrame            | :green_circle:  |
+| FramesGenerator           | :green_circle:  |
+| VideoGenerator            | :green_circle:  |
+| DOAEstimator              | :green_circle:  |
+
 
 ## Legend
 
