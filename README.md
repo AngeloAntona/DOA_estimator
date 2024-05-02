@@ -131,8 +131,8 @@ The implementation is guided by a homework assignment on acoustic source localiz
 
 | Class/Function Name       | Status          |
 |---------------------------|-----------------|
-| main                      | :green_circle:  |
-| audiodata                 | :green_circle:  |
+| Main                      | :green_circle:  |
+| Audiodata                 | :green_circle:  |
 | AllChannelSTFT            | :green_circle:  |
 | STFTProcessor             | :green_circle:  |
 | customFFT                 | :green_circle:  |
