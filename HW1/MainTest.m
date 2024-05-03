@@ -374,60 +374,64 @@ for f = 1:numFreqs
 end
 
 %% --------------------------------------------------
-% GetCovMatrix test
+% Final test
 
 clc;
 clearvars;
 close all;
 
-filepath = 'AudioFiles/array_recordings.wav';
-% Create an instance of the AudioData class
-audio_data = AudioData(filepath);
-audio_data.normalize;
-multichannel_signal = audio_data.Data;
-fs = audio_data.SampleRate;
 
-window = hann(1024); % example window function
-overlap = 0.8; % 80% overlap
-nfft = 1024; % number of FFT points
-MicrophoneCount = 16; % number of microphones
 
+[audio, fs] = audioread('AudioFiles/array_recordings.wav');
+
+% Normalize across all channels
+audio = audio / max(abs(audio(:))); % Normalize by dividing by the maximum absolute value
+
+
+mics_quantity = 16;
+d = 45e-2 / (mics_quantity-1); % distance btw 2 mics
+c = 343; % speed of sound in m/s
+
+
+omega_max = ( pi * c ) / d;
+freq_max = min(fs/2, omega_max/(2*pi));
+
+
+% Parametri
+f_test = 3000; % Frequenza di test (Hz)
+n_samples = 117864; % Numero di campioni
+initial_angle_deg = -45; % Angolo iniziale del suono (gradi)
+final_angle_deg = 45; % Angolo finale del suono (gradi)
+angle_deg = linspace(initial_angle_deg, final_angle_deg, n_samples); % Angolo in funzione del tempo
+
+% Calcola la fase relativa per ciascun microfono in base all'angolo
+lambda = c / f_test; % Lunghezza d'onda (m)
+
+phases = 2 * pi * (0:mics_quantity-1).' * d * sind(angle_deg) / lambda; % Fasi relative per ciascun microfono
+
+% Genera sinusoidi con fase relativa per simulare il suono proveniente da un angolo specifico
+t = (0:n_samples-1) / fs; % Tempo (s)
+test_matrix = zeros(n_samples, mics_quantity); % Inizializza la matrice di test
+for i = 1:mics_quantity
+    test_matrix(:, i) = sin(2 * pi * f_test * t + phases(i,:));
+end
+
+multichannel_signal=test_matrix;
+
+window = hann(1024); 
+overlap = 0.8; 
+nfft = 1024; 
+MicrophoneCount = 16;
 thetaRange = linspace(-90,90,180);
-d=0.45/15;
 
+% DOA Estimation.
 [S_multi, f, t] = AllChannelSTFT(multichannel_signal, fs, window, overlap, nfft, MicrophoneCount);
-disp("Fine STFT, inizio BeamForm");
 p_theta_time = Beamform(S_multi, d, 343, fs, MicrophoneCount, thetaRange);
-disp("Fine Beanform, inizio VisualizePseudospectrum");
+doa_estimates = DOAEstimator(p_theta_time, thetaRange);
+
+% Display the Results.
 VisualizePseudospectrum(p_theta_time, thetaRange, t);
-
-% Assuming p_theta_time and thetaRange are already computed
-doa_estimates = DOAEstimator(p_theta_time, thetaRange);
-
-% Optionally can display the DOA estimates
-disp('Estimated DOAs over time:');
-disp(doa_estimates);
-
-
-% Estimating DOAs
-doa_estimates = DOAEstimator(p_theta_time, thetaRange);
-
-% Display the DOA estimates
 figure(2);
 plot(doa_estimates);
 title('Estimated DOAs over time:');
-
-%%
-
-outputPath = './VideoFrames/'; % Relative path to the VideoFrames folder
-
-FramesGenerator(doa_estimates, d, MicrophoneCount, outputPath);
-
-%%
-
-videoFilename = 'doa_video.mp4'; % Name of the video file to be created
-frameRate = 10; % Desired frame rate for the video
-
-% Call the CreateVideoFromFrames function
-VideoGenerator(doa_estimates, outputPath, videoFilename, frameRate);
 
