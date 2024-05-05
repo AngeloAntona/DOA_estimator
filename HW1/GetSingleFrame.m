@@ -1,6 +1,5 @@
 function GetSingleFrame(doaFrame, d, MicrophoneCount, frameNo, outputPath)
     % Define the ULA geometry
-    d=d*10;
     x_coords = 0:d:(MicrophoneCount-1)*d; % X coordinates of the array elements
     y_coords = zeros(1, MicrophoneCount); % Y coordinates of the array elements
 
@@ -12,9 +11,8 @@ function GetSingleFrame(doaFrame, d, MicrophoneCount, frameNo, outputPath)
     center_x = mean(x_coords); % Calculate the geometric center of the array
     center_y = 0; % Since y_coords are all zero
 
-    arrow_length = 1; % Length of the arrow can be adjusted
-    % Rotate the arrow left by 90 degrees
-    u = -arrow_length * sin(doaRad); % Horizontal component
+    arrow_length = 0.11; % Length of the arrow can be adjusted
+    u = arrow_length * sin(doaRad); % Horizontal component
     v = arrow_length * cos(doaRad);  % Vertical component
 
     % Create figure
@@ -35,8 +33,14 @@ function GetSingleFrame(doaFrame, d, MicrophoneCount, frameNo, outputPath)
 
     % Set plot limits and labels
     title(sprintf('ULA Setup and Estimated DOA - Frame %d', frameNo));
+    xlabel('Array Length (meters)');
+    ylabel('Cosine of DOA');
 
-    % Optionally add a legend
+    % Set custom y-ticks and y-tick labels
+    y_tick_positions = [-0.2, -0.15, -0.1, -0.05, 0, 0.05, 0.1, 0.15, 0.2];
+    yticks(y_tick_positions); % Set the y-tick positions
+    yticklabels(cellstr(num2str(y_tick_positions' * 10))); % Multiply each y-tick label by ten
+
     legend show;
 
     % Save the current frame as an image

@@ -1,11 +1,11 @@
-function FramesGenerator(doa_estimates, d, MicrophoneCount, outputPath)
+function FramesGenerator(doa_estimates, d, MicrophoneCount, outputPath, figNumber)
     % Check and create the output directory if it does not exist
     if ~exist(outputPath, 'dir')
         mkdir(outputPath);
     end
 
     % Create a figure for plotting the frames
-    figure;
+    figure(figNumber);
     hold on;
     grid on;
     axis equal;

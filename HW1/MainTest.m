@@ -1,23 +1,4 @@
 %% --------------------------------------------------
-% ULAConfig Test
-clc;
-clearvars;
-close all;
-
-% Test values from the assignment
-microphone_count = 16;
-array_length_cm = 45;
-sound_speed = 343;
-sampling_frequency = 8000;
-
-% Create an instance of the ULAConfig class
-ula_config = ULAConfig(microphone_count, array_length_cm, sound_speed, sampling_frequency);
-
-% Display the properties to ensure they are set correctly
-disp(ula_config);
-
-
-%% --------------------------------------------------
 % AudioData Test
 
 clc;
@@ -40,8 +21,8 @@ disp('Audio data info before normalization:');
 disp(['Sample Rate: ', num2str(audio_data.SampleRate)]);
 disp(['Number of Samples: ', num2str(size(audio_data.Data, 1))]);
 disp(['Number of Channels: ', num2str(size(audio_data.Data, 2))]);
-disp('First 100 samples from the first channel:');
-disp(audio_data.Data(1:100, 1));
+disp('9 samples from the first channel:');
+disp(audio_data.Data(40000:40009, 1)');
 
 % Normalize the audio data
 audio_data = audio_data.normalize();
@@ -49,8 +30,8 @@ audio_data = audio_data.normalize();
 % Display some information about the data after normalization
 disp('Audio data info after normalization:');
 disp(['Max value: ', num2str(max(abs(audio_data.Data), [], 'all'))]);
-disp('First 100 samples from the first channel after normalization:');
-disp(audio_data.Data(1:100, 1));
+disp('Same 9 samples from the first channel after normalization:');
+disp(audio_data.Data(40000:40009, 1)');
 
 %% --------------------------------------------------
 % costum FFT test
@@ -111,7 +92,6 @@ fprintf('The custom FFT implementation matches MATLAB''s fft function within the
 
 
 %% --------------------------------------------------
-
 % STFTProcessor test
 
 clc;
@@ -168,136 +148,6 @@ if max_diff < 1e-10
 else
     disp('I risultati non coincidono.');
 end
-
-%% --------------------------------------------------
-
-% Beamformer test 1
-
-clc;
-clearvars;
-close all;
-
-% Define ULA Configuration
-microphone_count = 16;
-array_length_cm = 45; % Total length of the array in cm
-sound_speed = 343; % Speed of sound in m/s
-sampling_frequency = 8000; % Sampling frequency in Hz
-
-% Create an instance of ULAConfig
-ulaConfig = ULAConfig(microphone_count, array_length_cm, sound_speed, sampling_frequency);
-
-% Load Audio Data
-filepath = 'AudioFiles/array_recordings.wav'; % Specify the path to your multichannel audio file
-audioData = AudioData(filepath);
-
-% Normalize audio data (optional, if required)
-audioData = audioData.normalize();
-
-% Specify the direction of arrival of the sound in degrees
-direction = 30; % Example: 30 degrees
-
-% Call the Beamformer function
-beamformed_output = Beamformer(audioData, ulaConfig, direction);
-
-% Plot the results
-figure;
-subplot(2, 1, 1);
-plot(audioData.Data);
-title('Original Audio Signals');
-xlabel('Sample Number');
-ylabel('Amplitude');
-
-subplot(2, 1, 2);
-plot(beamformed_output);
-title(['Beamformed Output for Direction ', num2str(direction), ' degrees']);
-xlabel('Sample Number');
-ylabel('Amplitude');
-
-% Display the plot
-sgtitle('Comparison of Original and Beamformed Audio Signals');
-
-%% --------------------------------------------------
-
-% Beamformer test2
-
-clc;
-clearvars;
-close all;
-
-% Define ULA Configuration
-microphone_count = 16;
-array_length_cm = 45; % Total length of the array in cm
-sound_speed = 343; % Speed of sound in m/s
-sampling_frequency = 8000; % Sampling frequency in Hz
-
-ulaConfig = ULAConfig(microphone_count, array_length_cm, sound_speed, sampling_frequency);
-
-% Example Test with Synthetic Data
-fs = 8000; % Sampling frequency
-t = 0:1/fs:1-1/fs; % Time vector
-f = 1000; % Frequency of the tone
-theta_test = 30; % Direction for test signal in degrees
-
-% Simulate a plane wave arriving at theta_test
-test_signal = sin(2 * pi * f * (t - (ulaConfig.ArrayLength * sin(deg2rad(theta_test)) / ulaConfig.SoundSpeed)));
-
-% Use this test signal in place of actual microphone data to check beamforming
-test_audioData = AudioData('');
-test_audioData.Data = repmat(test_signal, 16, 1)'; % Simulate multi-channel data
-test_audioData.SampleRate = fs;
-
-% Beamform using the test signal
-test_output = Beamformer(test_audioData, ulaConfig, theta_test);
-
-% Plot the results
-figure;
-subplot(2, 1, 1);
-plot(test_audioData.Data);
-title('Original Audio Signals');
-xlabel('Sample Number');
-ylabel('Amplitude');
-
-subplot(2, 1, 2);
-plot(test_output);
-title(['Beamformed Output for Direction ', num2str(direction), ' degrees']);
-xlabel('Sample Number');
-ylabel('Amplitude');
-
-% Display the plot
-sgtitle('Comparison of Original and Beamformed Audio Signals');
-
-
-%% --------------------------------------------------
-% DOAEstimator test
-
-clc;
-clearvars;
-close all;
-
-% Define the ULA Configuration
-microphone_count = 16;                % Number of microphones in the ULA
-array_length_cm = 45;                 % Total length of the array in cm
-sound_speed = 343;                    % Speed of sound in m/s
-sampling_frequency = 8000;            % Sampling frequency in Hz
-
-% Create an instance of ULAConfig
-ulaConfig = ULAConfig(microphone_count, array_length_cm, sound_speed, sampling_frequency);
-
-% Parameters for the STFT and DOA estimation
-frameLength = 1024;                   % Length of each frame for STFT
-frameOverlap = 512;                   % Overlap between frames
-directionRange = [-90, 90];           % Range of directions to search for DOA
-stepSize = 1;                         % Step size in degrees for the DOA estimation
-
-% Path to the audio file
-audioFilePath = 'AudioFiles/array_recordings.wav';
-
-% Function to track and estimate the DOA of a moving source
-trackMovingSource(audioFilePath, ulaConfig, frameLength, frameOverlap, directionRange, stepSize);
-
-% Note: Ensure that all functions like trackMovingSource, STFTProcessor,
-% DOAEstimator, and necessary classes are properly defined and implemented
-% as discussed in previous messages.
 
 %% --------------------------------------------------
 % AllChannelSTFT test
@@ -380,22 +230,17 @@ clc;
 clearvars;
 close all;
 
-
-
 [audio, fs] = audioread('AudioFiles/array_recordings.wav');
 
 % Normalize across all channels
 audio = audio / max(abs(audio(:))); % Normalize by dividing by the maximum absolute value
 
-
 mics_quantity = 16;
 d = 45e-2 / (mics_quantity-1); % distance btw 2 mics
 c = 343; % speed of sound in m/s
 
-
 omega_max = ( pi * c ) / d;
 freq_max = min(fs/2, omega_max/(2*pi));
-
 
 % Parametri
 f_test = 3000; % Frequenza di test (Hz)
@@ -430,8 +275,6 @@ p_theta_time = Beamform(S_multi, d, 343, fs, MicrophoneCount, thetaRange);
 doa_estimates = DOAEstimator(p_theta_time, thetaRange);
 
 % Display the Results.
-VisualizePseudospectrum(p_theta_time, thetaRange, t);
-figure(2);
-plot(doa_estimates);
-title('Estimated DOAs over time:');
+VisualizePseudospectrum(p_theta_time, thetaRange, t, 1);
+VisualizeDOAestimates(doa_estimates, thetaRange, t, 2);
 

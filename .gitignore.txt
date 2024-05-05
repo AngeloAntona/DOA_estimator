@@ -1,0 +1,68 @@
+# Ignore MATLAB auto-generated files
+*.asv
+*.m~
+*.asv
+*.asv
+*.fig.bak
+*.mdl.bak
+*.mex
+*.mexa64
+*.mexglx
+*.mexmaci64
+*.mexmaci64
+*.mexw32
+*.mexw64
+*.mlx
+*.mlx.html
+*.slx.autosave
+*.stg
+*.tlc
+*.tlf
+*.tpc
+
+# Ignore MATLAB project files
+*.mproj.local
+*.prj
+*.slddip
+
+# Ignore MATLAB code analyzer files
+*.mATLABCodeAnalyzer
+
+# Ignore MATLAB Live Editor backup folders
+**/LiveEditorBackup/*
+
+# Ignore Simulink autosave files
+*.asv
+
+# Ignore Simulink cache files
+*.r20.1.mat
+*.r20.1.bak
+
+# Ignore MATLAB temporary files
+**/sccprj/*
+**/.pqi/*
+**/html/*
+**/work/*
+
+# Ignore compiled MATLAB binaries
+*.mexa64
+*.mexmaci64
+*.mexw64
+*.mexglx
+
+# Ignore MATLAB unit test report files
+**/test-reports/*
+
+# Ignore other miscellaneous MATLAB generated files
+*.autosave
+*.config
+*.DS_Store
+*.log
+*.mltbx
+*.prj
+*.r20.1
+*.sh
+*.suo
+*.tlf
+*.tpc
+*.xml

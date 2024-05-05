@@ -23,14 +23,12 @@ d=0.45/15;
 p_theta_time = Beamform(S_multi, d, 343, fs, MicrophoneCount, thetaRange);
 doa_estimates = DOAEstimator(p_theta_time, thetaRange);
 
-% Display the Results.
-VisualizePseudospectrum(p_theta_time, thetaRange, t);
-figure(2);
-plot(doa_estimates);
-title('Estimated DOAs over time:');
+%% Result Visualization.
+VisualizePseudospectrum(p_theta_time, thetaRange, t, 1);
+VisualizeDOAestimates(doa_estimates, thetaRange, t, 2);
 
-%% Generate the Video.
-FramesGenerator(doa_estimates, d, MicrophoneCount, outputPath);
+%% Video Generation.
+FramesGenerator(doa_estimates, d, MicrophoneCount, outputPath, 3);
 
 videoFilename = 'doa_video.mp4'; % Name of the video file to be created
 frameRate = 10; % Desired frame rate for the video
