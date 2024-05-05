@@ -84,7 +84,7 @@ In the next section, each of these classes will be analyzed individually.
 - **Pseudospectrum Analysis**: Visualizes power distribution across angles over time.
 ![Alt text](/ReadmeFiles/Pseudospectrum.png)
 - **DOA Estimates Analysis**: Tracks movement of sound source and estimates DOA.
-![Alt text](/ReadmeFiles/DOAs_over_time.png.png)
+![Alt text](/ReadmeFiles/DOAs_over_time.png)
 ![Alt text](/ReadmeFiles/ArrowSequence.jpg)
 
 - **Conclusion**: In conclusion, the analysis results affirm the effectiveness of the designed acoustic source localization system.
