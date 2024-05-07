@@ -98,10 +98,10 @@ clc;
 clearvars;
 close all;
 
-% % Genera un segnale di test
-% fs = 2000; % Frequenza di campionamento
+% Generate a test signal
+% fs = 2000; % Sampling frequency
 % t = 0:1/fs:1; % Tempo
-% x = sin(2*pi*100*t) + sin(2*pi*200*t) + randn(size(t)); % Segnale di test
+% x = sin(2*pi*100*t) + sin(2*pi*200*t) + randn(size(t)); % Test signal
 
 filepath = 'AudioFiles/array_recordings.wav';
 % Create an instance of the AudioData class
@@ -109,15 +109,15 @@ audio_data = AudioData(filepath);
 x = audio_data.Data(:,1);
 fs = audio_data.SampleRate;
 
-% Parametri della STFT
-window = hamming(256); % Finestra di Hamming
-overlap = 0.5; % Sovrapposizione del 50%
-nfft = 512; % Numero di punti della FFT
+% STFT Parameters
+window = hamming(256); % Hamming Window
+overlap = 0.5; % overlap 50%
+nfft = 512; % number of FFT points
 
-% Calcola la STFT con la nostra implementazione
+% Calculate our STFT
 [S_custom, f_custom, t_custom] = STFTProcessor(x, fs, window, overlap, nfft);
 
-% Calcola la STFT con la funzione stft standard di MATLAB
+% Calculate the MATLAB's STFT
 [S_matlab, f_matlab, t_matlab] = spectrogram(x, window, overlap*length(window), nfft, fs);
 
 disp(size(S_custom));
@@ -144,9 +144,9 @@ ylabel('Frequency (Hz)');
 % Confronta i risultati
 max_diff = max(abs(S_custom - S_matlab));
 if max_diff < 1e-10
-    disp('I risultati coincidono.');
+    disp('The results coincide.');
 else
-    disp('I risultati non coincidono.');
+    disp('The results don't coincide.');
 end
 
 %% --------------------------------------------------
@@ -196,30 +196,30 @@ clearvars;
 close all;
 
 
-% Numero di frequenze, frame e microfoni
+% Number of frequencies, frames and microphones
 numFreqs = 10;
 numFrames = 100;
 numMics = 3;
 
-% Genera dati STFT sintetici per i microfoni
-% Assumiamo che ogni elemento sia complesso
+% Generate synthetic STFT data for the microphones 
+% Assuming every element is complex
 S = rand(numFreqs, numFrames, numMics) + 1i * rand(numFreqs, numFrames, numMics);
 
-% Chiama la funzione GetCovMatrix
+% Call GetCovMAtrix
 R = GetCovMatrix(S);
 
-% Stampa le matrici di covarianza per ogni frequenza
+% Print the covariance matrices for each frequency
 for f = 1:numFreqs
-    fprintf('Matrice di covarianza per la frequenza %d:\n', f);
+    fprintf('Covariance matrix for the frequency %d:\n', f);
     disp(R(:,:,f));
 end
 
-% Verifica la correttezza del calcolo verificando proprietà come l'hermitianità
+% Verify hermitian property
 for f = 1:numFreqs
     if ishermitian(R(:,:,f))
-        fprintf('La matrice di covarianza alla frequenza %d è hermitiana.\n', f);
+        fprintf('The covariance matrix at frequency %d is hermitian.\n', f);
     else
-        fprintf('Errore: la matrice di covarianza alla frequenza %d non è hermitiana.\n', f);
+        fprintf('Error: The covariance matrix at frequency %d is not hermitian.\n', f);
     end
 end
 
@@ -242,21 +242,21 @@ c = 343; % speed of sound in m/s
 omega_max = ( pi * c ) / d;
 freq_max = min(fs/2, omega_max/(2*pi));
 
-% Parametri
-f_test = 3000; % Frequenza di test (Hz)
-n_samples = 117864; % Numero di campioni
-initial_angle_deg = -45; % Angolo iniziale del suono (gradi)
-final_angle_deg = 45; % Angolo finale del suono (gradi)
-angle_deg = linspace(initial_angle_deg, final_angle_deg, n_samples); % Angolo in funzione del tempo
+% Parameters
+f_test = 3000; % Test frequency (Hz)
+n_samples = 117864; % Number of samples
+initial_angle_deg = -45; % Initial sound angle (degrees)
+final_angle_deg = 45; % Final sound angle (degrees)
+angle_deg = linspace(initial_angle_deg, final_angle_deg, n_samples); % Angle as a function of time
 
-% Calcola la fase relativa per ciascun microfono in base all'angolo
-lambda = c / f_test; % Lunghezza d'onda (m)
+% Calculate the relative phase for each microphone based on the angle
+lambda = c / f_test; % Wavelength (m)
 
-phases = 2 * pi * (0:mics_quantity-1).' * d * sind(angle_deg) / lambda; % Fasi relative per ciascun microfono
+phases = 2 * pi * (0:mics_quantity-1).' * d * sind(angle_deg) / lambda; % Relative phases for each microphone
 
-% Genera sinusoidi con fase relativa per simulare il suono proveniente da un angolo specifico
-t = (0:n_samples-1) / fs; % Tempo (s)
-test_matrix = zeros(n_samples, mics_quantity); % Inizializza la matrice di test
+% Generate sinusoids with relative phase to simulate sound coming from a specific angle
+t = (0:n_samples-1) / fs; % Time (s)
+test_matrix = zeros(n_samples, mics_quantity); % Initialize the test matrix
 for i = 1:mics_quantity
     test_matrix(:, i) = sin(2 * pi * f_test * t + phases(i,:));
 end
