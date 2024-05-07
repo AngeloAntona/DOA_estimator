@@ -7,6 +7,9 @@ function [p_theta_time] = Beamform(S, d, c, Fs, numMics, theta_range)
     % numMics - number of microphones in the array
     % theta_range - array of angles to compute DOA estimates
 
+    % Output:
+    % p_theta_time : 2D matrix where each element represents the computed power for a specific angle and time frame
+
     [numFreqs, numTimeFrames, ~] = size(S);
     p_theta_time = zeros(length(theta_range), numTimeFrames);
     freqs = linspace(0, Fs/2, numFreqs); % Frequency vector outside the loop
