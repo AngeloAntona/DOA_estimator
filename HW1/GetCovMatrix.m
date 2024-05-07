@@ -1,8 +1,8 @@
 function R = GetCovMatrix(S_time)
     % Inputs:
-    % S_time - 2D matrix: [numFreqs x numMics]
+    % S_time : 2D matrix [numFreqs x numMics]
     % Output:
-    % R = covariance matrix
+    % R : covariance matrix
 
     [numFreqs, numMics] = size(S_time);
     R = zeros(numMics, numMics, numFreqs);
