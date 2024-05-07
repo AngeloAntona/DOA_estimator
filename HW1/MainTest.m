@@ -146,7 +146,7 @@ max_diff = max(abs(S_custom - S_matlab));
 if max_diff < 1e-10
     disp('The results coincide.');
 else
-    disp('The results don't coincide.');
+    disp('The results do not coincide.');
 end
 
 %% --------------------------------------------------
