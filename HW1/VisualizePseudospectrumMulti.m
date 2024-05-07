@@ -13,7 +13,7 @@ function VisualizePseudospectrumMulti(p_theta_time, theta_range, time_steps, fig
     % Labeling the axes and title
     xlabel('Time (seconds)');
     ylabel('DOA Angle (degrees)');
-    title('Pseudospectrum for DOA Estimation (Aritmetic mean)');
+    title('Pseudospectrum for DOA Estimation (Arithmetic mean)');
     
     % Set y-axis to have correct orientation and labeling
     set(gca, 'YDir', 'normal');
@@ -36,7 +36,7 @@ function VisualizePseudospectrumMulti(p_theta_time, theta_range, time_steps, fig
     % Labeling the axes and title
     xlabel('Time (seconds)');
     ylabel('DOA Angle (degrees)');
-    title('Pseudospectrum for DOA Estimation (Armonic Mean)');
+    title('Pseudospectrum for DOA Estimation (Harmonic Mean)');
     
     % Set y-axis to have correct orientation and labeling
     set(gca, 'YDir', 'normal');

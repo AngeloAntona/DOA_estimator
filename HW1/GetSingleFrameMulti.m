@@ -4,12 +4,9 @@ function GetSingleFrameMulti(doaFrame, d, MicrophoneCount, frameNo, outputPath, 
     y_coords = zeros(1, MicrophoneCount); % Y coordinates of the array elements
 
     % Create figure
-    fig = figure(5);  % Create a new figure
+    fig = figure(figNumber);  % Create a new figure
     set(fig, 'NumberTitle', 'on', 'Name', sprintf('ULA Setup and Estimated DOA'), 'MenuBar', 'none', 'ToolBar', 'none');
     set(fig, 'WindowState', 'maximized');  % Maximize the figure
-
-
-
    
     % -------------
 
@@ -41,7 +38,7 @@ function GetSingleFrameMulti(doaFrame, d, MicrophoneCount, frameNo, outputPath, 
     quiver(center_x, center_y, u, v, 'k', 'LineWidth', 2, 'MaxHeadSize', 2, 'DisplayName', 'Estimated DOA');
 
     % Set plot limits and labels
-    title(sprintf('Estimated DOA (Aritmetic Mean) - Frame %d', frameNo));
+    title(sprintf('Estimated DOA (Arithmetic Mean) - Frame %d', frameNo));
     xlabel('Array Length (meters)');
     ylabel('Cosine of DOA');
 
@@ -82,7 +79,7 @@ function GetSingleFrameMulti(doaFrame, d, MicrophoneCount, frameNo, outputPath, 
     quiver(center_x, center_y, u, v, 'k', 'LineWidth', 2, 'MaxHeadSize', 2, 'DisplayName', 'Estimated DOA');
 
     % Set plot limits and labels
-    title(sprintf('Estimated DOA (Armonic Mean) - Frame %d', frameNo));
+    title(sprintf('Estimated DOA (Harmonic Mean) - Frame %d', frameNo));
     xlabel('Array Length (meters)');
     ylabel('Cosine of DOA');
 

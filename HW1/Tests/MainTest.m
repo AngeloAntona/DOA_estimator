@@ -6,7 +6,7 @@ clearvars;
 close all;
 
 % Path to the audio file within the 'AudioFiles' directory
-filepath = 'AudioFiles/array_recordings.wav';
+filepath = '../AudioFiles/array_recordings.wav';
 
 % Verify that the file exists before trying to read
 if ~isfile(filepath)
@@ -103,7 +103,7 @@ close all;
 % t = 0:1/fs:1; % Tempo
 % x = sin(2*pi*100*t) + sin(2*pi*200*t) + randn(size(t)); % Test signal
 
-filepath = 'AudioFiles/array_recordings.wav';
+filepath = '../AudioFiles/array_recordings.wav';
 % Create an instance of the AudioData class
 audio_data = AudioData(filepath);
 x = audio_data.Data(:,1);
@@ -156,7 +156,7 @@ clc;
 clearvars;
 close all;
 
-filepath = 'AudioFiles/array_recordings.wav';
+filepath = '../AudioFiles/array_recordings.wav';
 % Create an instance of the AudioData class
 audio_data = AudioData(filepath);
 multichannel_signal = audio_data.Data;
@@ -230,7 +230,7 @@ clc;
 clearvars;
 close all;
 
-[audio, fs] = audioread('AudioFiles/array_recordings.wav');
+[audio, fs] = audioread('../AudioFiles/array_recordings.wav');
 
 % Normalize across all channels
 audio = audio / max(abs(audio(:))); % Normalize by dividing by the maximum absolute value
@@ -271,8 +271,8 @@ thetaRange = linspace(-90,90,180);
 
 % DOA Estimation.
 [S_multi, f, t] = AllChannelSTFT(multichannel_signal, fs, window, overlap, nfft, MicrophoneCount);
-p_theta_time = Beamform(S_multi, d, 343, fs, MicrophoneCount, thetaRange);
-doa_estimates = DOAEstimator(p_theta_time, thetaRange);
+p_theta_time = BeamformTest(S_multi, d, 343, fs, MicrophoneCount, thetaRange);
+doa_estimates = DOAEstimatorTest(p_theta_time, thetaRange);
 
 % Display the Results.
 VisualizePseudospectrum(p_theta_time, thetaRange, t, 1);
