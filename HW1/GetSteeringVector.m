@@ -7,7 +7,7 @@ function a = GetSteeringVector(theta, d, c, numMics, freq)
     %   numMics - number of microphones in the array
     %   freq - frequency in Hz for which to calculate the steering vector
     % Output:
-    % a = steering vector
+    % a : steering vector
     
     k = 2 * pi * freq / c;  % Wavenumber for the given frequency
     a = exp(-1i * k * d * sin(deg2rad(theta)) * (0:(numMics-1))).';  % Steering vector, column vector
