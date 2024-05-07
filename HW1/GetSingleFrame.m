@@ -1,4 +1,4 @@
-function GetSingleFrame(doaFrame, d, MicrophoneCount, frameNo, outputPath)
+function GetSingleFrame(doaFrame, d, MicrophoneCount, frameNo, outputPath, figNumber)
     % Define the ULA geometry
     x_coords = 0:d:(MicrophoneCount-1)*d; % X coordinates of the array elements
     y_coords = zeros(1, MicrophoneCount); % Y coordinates of the array elements
@@ -16,7 +16,7 @@ function GetSingleFrame(doaFrame, d, MicrophoneCount, frameNo, outputPath)
     v = arrow_length * cos(doaRad);  % Vertical component
 
     % Create figure
-    figure(4);
+    figure(figNumber);
     hold on;
     grid on;
     axis equal;

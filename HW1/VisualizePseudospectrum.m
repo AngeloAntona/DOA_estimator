@@ -1,3 +1,4 @@
+
 function VisualizePseudospectrum(p_theta_time, theta_range, time_steps, figNumber)
     % Initialize the figure
     figure(figNumber);

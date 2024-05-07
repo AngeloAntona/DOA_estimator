@@ -4,15 +4,9 @@ function FramesGenerator(doa_estimates, d, MicrophoneCount, outputPath, figNumbe
         mkdir(outputPath);
     end
 
-    % Create a figure for plotting the frames
-    figure(figNumber);
-    hold on;
-    grid on;
-    axis equal;
-
     % Generate and save frames
     for k = 1:length(doa_estimates)
-        GetSingleFrame(doa_estimates(k), d, MicrophoneCount, k, outputPath);
+        GetSingleFrame(doa_estimates(k), d, MicrophoneCount, k, outputPath, figNumber);
         clf; % Clears the current figure for the next frame
     end
 
