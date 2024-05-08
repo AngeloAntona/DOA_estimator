@@ -35,23 +35,22 @@ function [p_theta_time] = Beamform(S, d, c, Fs, numMics, theta_range)
 
         % Harmonic mean
         harmonic_mean_inv = mean(1 ./ (p_theta_time_freq(:, timeIdx, :) + 1e-10), 3);
-        p_theta_time(:, timeIdx, 2) = 1 ./ harmonic_mean_inv;
+    p_theta_time(:, timeIdx, 2) = 1 ./ harmonic_mean_inv;
 
-        % Geometric mean
-        geometric_mean_log = sum(log(p_theta_time_freq(:, timeIdx, :) + 1e-10), 3) / numFreqs;
-        p_theta_time(:, timeIdx, 3) = exp(geometric_mean_log);
+    % Geometric mean
+    geometric_mean_log = sum(log(p_theta_time_freq(:, timeIdx, :) + 1e-10), 3) / numFreqs;
+    p_theta_time(:, timeIdx, 3) = exp(geometric_mean_log);
 
-        % Non-linear normalization using power function, performed separately for each mean
-        for meanIdx = 1:3
-            p_theta_time(:, timeIdx, meanIdx) = p_theta_time(:, timeIdx, meanIdx).^2;  % Squaring the values
-
-            % Further normalization to bring values between 0 and 1, separately for each mean
-            max_val = max(p_theta_time(:, timeIdx, meanIdx));
-            if max_val > 0
-                p_theta_time(:, timeIdx, meanIdx) = p_theta_time(:, timeIdx, meanIdx) / max_val;
-            end
-        end
+    % Non-linear normalization using square root for each mean
+    for meanIdx = 1:3
+        p_theta_time(:, timeIdx, meanIdx) = sqrt(p_theta_time(:, timeIdx, meanIdx));
     end
 
+    % Further normalization to bring values between 0 and 1
+    max_val = max(max(p_theta_time(:, timeIdx, :)));
+    if max_val > 0
+        p_theta_time(:, timeIdx, :) = p_theta_time(:, timeIdx, :) / max_val;
+    end
+end
 
 end
