@@ -1,4 +1,4 @@
-# CMLS_HW1
+# SASP_HW1
 
 ## Overview
 This project aims to implement Direction of Arrival (DOA) estimation using audio signal processing techniques. The source localization involves a multichannel recording acquired using a uniform linear microphone array (ULA) composed of 16 MEMS microphones spaced along a 45 cm length. This array captures audio data via an Audio-over-IP connection at a sampling rate of 8 kHz. The acoustic scene features a moving sound source in front of the ULA, and the speed of sound is established at 343 m/s.
