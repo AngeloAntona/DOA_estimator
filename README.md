@@ -116,6 +116,6 @@ This system provides a comprehensive framework for estimating the direction of a
 
 ## Legend
 
-- :green_circle: Complete
-- :yellow_circle: In Progress
-- :red_circle: Not Implemented
+- :green_circle: Complete.
+- :yellow_circle: In Progress.
+- :red_circle: Not Implemented.
